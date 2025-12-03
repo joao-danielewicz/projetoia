@@ -2,6 +2,9 @@ import os
 from objects.Medicamento import Medicamento
 from objects.ConsumoMensal import ConsumoMensal
 from objects.Database import Database
+from objects.MotorInferencia import MotorInferencia as Motor
+from objects.MotorInferencia import *
+from datetime import datetime
 db = Database()
 
 def CalculoMedia(consumos):
@@ -27,7 +30,7 @@ def ListarConsumos(idMedicamento):
 while True:
     # ================= MENU GERAL =================
     print("=========== OPÇÕES ===========")
-    opcao = int(input("1 - Medicamentos \n 2 - Consumo \n 0 - Sair"))
+    opcao = int(input("1 - Medicamentos \n 2 - Consumo \n 3 - Executar conferências \n 0 - Sair"))
     match opcao:
         case 0:
             break
@@ -41,7 +44,11 @@ while True:
                     break
                 case 1:
                     os.system('cls')
-                    p1 = Medicamento(input("Nome: "),  input("Validade: "), input("Estoque: "))
+                    p1 = Medicamento(input("Nome: "),
+                      (
+                          datetime(int(input("Validade: \nAno: ")), int(input("Mês: ")), int(input("Dia: ")))
+                      ),
+                      input("Estoque: "))
                     db.CadastroMedicamento(p1)
                 case 2:
                     ListarMedicamentos()
@@ -74,9 +81,10 @@ while True:
                     idMedicamento = int(input("Ver consumos de qual medicamento?"))
                     ListarConsumos(idMedicamento)
                 
-                    
-                    
+        case 3:
+            motor = Motor()
+            motor.reset()
+            for medicamento in db.SelectMedicamentos():
+                motor.declare(Estoque(valor = medicamento[3], nome = medicamento[1]))
             
-
-
-print(db.SelectConsumos(int(input())))
+            motor.run()

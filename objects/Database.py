@@ -4,12 +4,12 @@ from objects.Medicamento import Medicamento
 class Database:
     
     def __init__(self):
-        self.con = sqlite3.connect(".\\database.db")
+        self.con = sqlite3.connect(".\\database.db", detect_types=sqlite3.PARSE_DECLTYPES)
         self.cur = self.con.cursor()
 
         res = self.cur.execute("SELECT name FROM sqlite_master WHERE name='medicamento'")
         if (res.fetchone() is None):
-            self.cur.execute("CREATE TABLE medicamento(nome TEXT, validade DATETIME, estoque INT)")
+            self.cur.execute("CREATE TABLE medicamento(nome TEXT, validade TIMESTAMP, estoque INT)")
             
         res = self.cur.execute("SELECT name FROM sqlite_master WHERE name='consumo'")
         if (res.fetchone() is None):
