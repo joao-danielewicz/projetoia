@@ -15,7 +15,20 @@ class Database:
         if (res.fetchone() is None):
             self.cur.execute("CREATE TABLE consumo(quantidade INT, idMedicamento INT)")
 
-        res = self.cur.execute("SELECT name FROM sqlite_master")
+        res = self.cur.execute("SELECT name FROM sqlite_master WHERE name='params'")
+        if (res.fetchone() is None):
+            self.cur.execute("CREATE TABLE params(seguranca DOUBLE, diasVencimento INT)")
+            self.cur.execute("INSERT INTO params VALUES(?, ?)", [0.2, 90])
+            self.con.commit()
+
+    def SelectParams(self):
+        res = self.cur.execute("SELECT * FROM params")
+        return res.fetchone()
+    
+    def UpdateParams(self, dados):
+        self.cur.execute("UPDATE params SET seguranca = ?, diasVencimento=?", dados)
+        self.con.commit()
+        
     
     def CadastroMedicamento(self, medicamento):
         dados = [medicamento.nome, medicamento.validade, medicamento.estoque]
